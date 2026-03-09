@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<html lang="es"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>PC Builder — Configura tu equipo</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="puta%20ia_files/css2.css" rel="stylesheet">
 <style>
 :root{
   --bg:#080c10;--s1:#0d1117;--s2:#111820;--s3:#162030;
@@ -212,8 +212,8 @@ header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify
     <span class="sub">configurador de equipos</span>
   </div>
   <div class="db-pill">
-    <div class="db-dot" id="db-dot"></div>
-    <span id="db-lbl">conectando…</span>
+    <div class="db-dot ok" id="db-dot"></div>
+    <span id="db-lbl">DB conectada</span>
   </div>
 </header>
 
@@ -226,35 +226,621 @@ header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify
   <div class="mode-card active" id="mc-build" onclick="setMode('build')">
     <span class="mc-icon">🖥️</span>
     <h2>Construir desde cero</h2>
-    <p>Elige cada pieza paso a paso. Al seleccionar la placa base, todos los demás componentes se filtran automáticamente para garantizar compatibilidad total.</p>
+    <p>Elige cada pieza paso a paso. Al seleccionar la placa base, todos
+ los demás componentes se filtran automáticamente para garantizar 
+compatibilidad total.</p>
   </div>
 </div>
 
-<div id="builder">
+<div id="builder" class="on">
   <p class="sec-label" id="sec-lbl">// selecciona componentes</p>
 
-  <div id="compat-banner">
+  <div id="compat-banner" class="show">
 
   <!-- Filtros rápidos de gama -->
   <div id="gama-bar" style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center">
     <span style="font-size:.7rem;color:var(--muted);font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:2px">Filtrar todo por gama:</span>
-    <button class="gama-btn" id="gbtn-all"   onclick="setGamaGlobal('')"      style="background:rgba(255,255,255,.08);color:var(--text)">Todas</button>
-    <button class="gama-btn" id="gbtn-baja"  onclick="setGamaGlobal('baja')"  style="background:rgba(90,158,111,.15);color:#5a9e6f;border-color:#5a9e6f">Gama Baja</button>
+    <button class="gama-btn active-g" id="gbtn-all" onclick="setGamaGlobal('')" style="background:rgba(255,255,255,.08);color:var(--text)">Todas</button>
+    <button class="gama-btn" id="gbtn-baja" onclick="setGamaGlobal('baja')" style="background:rgba(90,158,111,.15);color:#5a9e6f;border-color:#5a9e6f">Gama Baja</button>
     <button class="gama-btn" id="gbtn-media" onclick="setGamaGlobal('media')" style="background:rgba(224,160,64,.15);color:#e0a040;border-color:#e0a040">Gama Media</button>
-    <button class="gama-btn" id="gbtn-alta"  onclick="setGamaGlobal('alta')"  style="background:rgba(224,85,85,.15);color:#e05555;border-color:#e05555">Gama Alta</button>
+    <button class="gama-btn" id="gbtn-alta" onclick="setGamaGlobal('alta')" style="background:rgba(224,85,85,.15);color:#e05555;border-color:#e05555">Gama Alta</button>
   </div>
     <span class="cb-icon">🔗</span>
-    <span id="compat-banner-txt"></span>
+    <span id="compat-banner-txt">H610M-K — Socket LGA1700 · RAM DDR4 · PCIe 4.0 · Disco: NVMe M.2, 4 puertos SATA</span>
     <button class="cb-clear" onclick="clearMotherboard()">✕ Quitar placa base</button>
   </div>
 
-  <div class="slots-grid" id="slots-grid"></div>
+  <div class="slots-grid" id="slots-grid"><div class="slot filled" id="slot-motherboard">
+    <div class="slot-top">
+      <span class="slot-name">🖨️ Placa Base</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-motherboard" placeholder="Escribe para buscar Placa Base…" autocomplete="off" oninput="onInput('motherboard','motherboards')" onfocus="onFocus('motherboard','motherboards')" onblur="setTimeout(()=>closeDrop('motherboard'),200)" value="H610M-K">
+      <div class="spin" id="spin-motherboard"></div>
+      <div class="results-drop" id="drop-motherboard"><div class="rd-header">Todos los componentes disponibles (60)</div><div class="rd-item">
+      <span class="rd-name">A320M-HDV R4.0</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">49.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">54.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M Pro4-F</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M S2H</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M DS2 DDR4</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">74.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M-HDV</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">74.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M Pro4</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M S2H V2</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M DS3H V2</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M Pro-A DDR4</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M Pro4 R2.0</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M-A Pro Max II</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M Mortar</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">99.99 €</span></div><div class="rd-empty">… y 45 más. Usa el buscador para filtrar.</div></div>
+    </div>
+    <div id="chip-motherboard">
+    <div class="sel-chip">
+      <span class="cn" title="H610M-K">H610M-K</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="cp">79.99 €</span>
+      <button class="cr" onclick="removeComp('motherboard')">✕</button>
+    </div></div>
+    <div class="compat-warn" id="cwarn-motherboard"></div>
+    <button class="flt-toggle" id="ftbtn-motherboard" onclick="toggleFlt('motherboard')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-motherboard">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Socket</span>
+      <input class="flt-input" id="flt-motherboard-socket" placeholder="AM5, LGA1700…">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-motherboard-brand" placeholder="ASUS, MSI…">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Factor de forma</span>
+      <input class="flt-input" id="flt-motherboard-form_factor" placeholder="ATX, mATX, ITX">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-motherboard-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-motherboard-max_price" placeholder="300">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('motherboard','motherboards')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('motherboard','motherboards')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-motherboard"><p class="sug-title">💡 mejoras disponibles</p><div class="sug-item">
+        <span class="si-name">B450M-A Pro Max II</span>
+        <span class="si-price">84.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">B450M Pro4 R2.0</span>
+        <span class="si-price">84.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">B450M Mortar</span>
+        <span class="si-price">99.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div></div>
+  </div><div class="slot filled compat-filtered" id="slot-cpu">
+    <div class="slot-top">
+      <span class="slot-name">⚙️ Procesador</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-cpu">todos</span><span class="compat-tag show" id="ctag-cpu">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-cpu" placeholder="Escribe para buscar Procesador…" autocomplete="off" oninput="onInput('cpu','cpus')" onfocus="onFocus('cpu','cpus')" onblur="setTimeout(()=>closeDrop('cpu'),200)" value="Ryzen 3 2200G">
+      <div class="spin" id="spin-cpu"></div>
+      <div class="results-drop" id="drop-cpu"><div class="rd-header">Todos los componentes disponibles (60)</div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 1200 AF</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">69.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 2200G</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">69.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 1600 AF</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10100</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 3200G</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-12100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-13100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 4500</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 3300X</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 2600</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 3500</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10300</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10320</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">94.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 3500X</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">94.99 €</span></div><div class="rd-empty">… y 45 más. Usa el buscador para filtrar.</div></div>
+    </div>
+    <div id="chip-cpu">
+    <div class="sel-chip">
+      <span class="cn" title="Ryzen 3 2200G">Ryzen 3 2200G</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="cp">69.99 €</span>
+      <button class="cr" onclick="removeComp('cpu')">✕</button>
+    </div></div>
+    <div class="compat-warn show" id="cwarn-cpu">⚠ "Ryzen 3 2200G" puede no ser compatible con la placa seleccionada</div>
+    <button class="flt-toggle" id="ftbtn-cpu" onclick="toggleFlt('cpu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-cpu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-cpu-brand" placeholder="AMD, Intel">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Núcleos mín.</span>
+      <input class="flt-input" id="flt-cpu-min_cores" placeholder="8">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-cpu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-cpu-max_price" placeholder="400">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('cpu','cpus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('cpu','cpus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-cpu"><p class="sug-title">💡 mejoras disponibles</p><div class="sug-item">
+        <span class="si-name">Ryzen 3 3200G</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">Ryzen 5 1600 AF</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">Core i3-10100</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div></div>
+  </div><div class="slot compat-filtered" id="slot-ram">
+    <div class="slot-top">
+      <span class="slot-name">💾 Memoria RAM</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-ram">todos</span><span class="compat-tag show" id="ctag-ram">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-ram" placeholder="Escribe para buscar Memoria RAM…" autocomplete="off" oninput="onInput('ram','ram')" onfocus="onFocus('ram','ram')" onblur="setTimeout(()=>closeDrop('ram'),200)">
+      <div class="spin" id="spin-ram"></div>
+      <div class="results-drop" id="drop-ram"></div>
+    </div>
+    <div id="chip-ram"></div>
+    <div class="compat-warn" id="cwarn-ram"></div>
+    <button class="flt-toggle" id="ftbtn-ram" onclick="toggleFlt('ram')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-ram">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-ram-brand" placeholder="Corsair, G.Skill">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">GB mín.</span>
+      <input class="flt-input" id="flt-ram-min_gb" placeholder="16">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-ram-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-ram-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('ram','ram')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('ram','ram')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-ram"></div>
+  </div><div class="slot compat-filtered" id="slot-gpu">
+    <div class="slot-top">
+      <span class="slot-name">🎮 Tarjeta Gráfica</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-gpu" placeholder="Escribe para buscar Tarjeta Gráfica…" autocomplete="off" oninput="onInput('gpu','gpus')" onfocus="onFocus('gpu','gpus')" onblur="setTimeout(()=>closeDrop('gpu'),200)">
+      <div class="spin" id="spin-gpu"></div>
+      <div class="results-drop" id="drop-gpu"></div>
+    </div>
+    <div id="chip-gpu"></div>
+    <div class="compat-warn" id="cwarn-gpu"></div>
+    <button class="flt-toggle" id="ftbtn-gpu" onclick="toggleFlt('gpu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-gpu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-gpu-brand" placeholder="NVIDIA, AMD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">VRAM mín. (GB)</span>
+      <input class="flt-input" id="flt-gpu-min_vram" placeholder="8">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-gpu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-gpu-max_price" placeholder="600">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('gpu','gpus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('gpu','gpus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-gpu"></div>
+  </div><div class="slot compat-filtered" id="slot-storage">
+    <div class="slot-top">
+      <span class="slot-name">💿 Almacenamiento</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-storage" placeholder="Escribe para buscar Almacenamiento…" autocomplete="off" oninput="onInput('storage','storage')" onfocus="onFocus('storage','storage')" onblur="setTimeout(()=>closeDrop('storage'),200)">
+      <div class="spin" id="spin-storage"></div>
+      <div class="results-drop" id="drop-storage"></div>
+    </div>
+    <div id="chip-storage"></div>
+    <div class="compat-warn" id="cwarn-storage"></div>
+    <button class="flt-toggle" id="ftbtn-storage" onclick="toggleFlt('storage')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-storage">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Tipo</span>
+      <input class="flt-input" id="flt-storage-type" placeholder="NVMe, SSD, HDD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-storage-brand" placeholder="Samsung, WD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">GB mín.</span>
+      <input class="flt-input" id="flt-storage-min_gb" placeholder="500">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-storage-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-storage-max_price" placeholder="120">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('storage','storage')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('storage','storage')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-storage"></div>
+  </div><div class="slot compat-filtered" id="slot-psu">
+    <div class="slot-top">
+      <span class="slot-name">🔌 Fuente Alimentación</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-psu" placeholder="Escribe para buscar Fuente Alimentación…" autocomplete="off" oninput="onInput('psu','psus')" onfocus="onFocus('psu','psus')" onblur="setTimeout(()=>closeDrop('psu'),200)">
+      <div class="spin" id="spin-psu"></div>
+      <div class="results-drop" id="drop-psu"></div>
+    </div>
+    <div id="chip-psu"></div>
+    <div class="compat-warn" id="cwarn-psu"></div>
+    <button class="flt-toggle" id="ftbtn-psu" onclick="toggleFlt('psu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-psu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-psu-brand" placeholder="Corsair, Seasonic">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Vatios mín.</span>
+      <input class="flt-input" id="flt-psu-min_watts" placeholder="750">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Certificación</span>
+      <input class="flt-input" id="flt-psu-certification" placeholder="Gold, Platinum">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-psu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-psu-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('psu','psus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('psu','psus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-psu"></div>
+  </div><div class="slot compat-filtered" id="slot-case">
+    <div class="slot-top">
+      <span class="slot-name">🗃️ Caja</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-case" placeholder="Escribe para buscar Caja…" autocomplete="off" oninput="onInput('case','cases')" onfocus="onFocus('case','cases')" onblur="setTimeout(()=>closeDrop('case'),200)">
+      <div class="spin" id="spin-case"></div>
+      <div class="results-drop" id="drop-case"></div>
+    </div>
+    <div id="chip-case"></div>
+    <div class="compat-warn" id="cwarn-case"></div>
+    <button class="flt-toggle" id="ftbtn-case" onclick="toggleFlt('case')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-case">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-case-brand" placeholder="Corsair, NZXT">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Factor de forma</span>
+      <input class="flt-input" id="flt-case-form_factor" placeholder="ATX, mATX">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-case-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-case-max_price" placeholder="130">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('case','cases')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('case','cases')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-case"></div>
+  </div><div class="slot compat-filtered" id="slot-cooler">
+    <div class="slot-top">
+      <span class="slot-name">❄️ Refrigeración</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-cooler">todos</span><span class="compat-tag show" id="ctag-cooler">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-cooler" placeholder="Escribe para buscar Refrigeración…" autocomplete="off" oninput="onInput('cooler','coolers')" onfocus="onFocus('cooler','coolers')" onblur="setTimeout(()=>closeDrop('cooler'),200)">
+      <div class="spin" id="spin-cooler"></div>
+      <div class="results-drop" id="drop-cooler"></div>
+    </div>
+    <div id="chip-cooler"></div>
+    <div class="compat-warn" id="cwarn-cooler"></div>
+    <button class="flt-toggle" id="ftbtn-cooler" onclick="toggleFlt('cooler')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-cooler">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Tipo</span>
+      <input class="flt-input" id="flt-cooler-type" placeholder="Air, AIO 360">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-cooler-brand" placeholder="Noctua, NZXT">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-cooler-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-cooler-max_price" placeholder="160">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('cooler','coolers')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('cooler','coolers')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-cooler"></div>
+  </div><div class="slot" id="slot-monitor">
+    <div class="slot-top">
+      <span class="slot-name">🖥️ Pantalla</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-monitor" placeholder="Escribe para buscar Pantalla…" autocomplete="off" oninput="onInput('monitor','monitors')" onfocus="onFocus('monitor','monitors')" onblur="setTimeout(()=>closeDrop('monitor'),200)">
+      <div class="spin" id="spin-monitor"></div>
+      <div class="results-drop" id="drop-monitor"></div>
+    </div>
+    <div id="chip-monitor"></div>
+    <div class="compat-warn" id="cwarn-monitor"></div>
+    <button class="flt-toggle" id="ftbtn-monitor" onclick="toggleFlt('monitor')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-monitor">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Resolución</span>
+      <input class="flt-input" id="flt-monitor-resolution" placeholder="1080p, 1440p, 4K">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Hz mínimos</span>
+      <input class="flt-input" id="flt-monitor-min_hz" placeholder="144">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Panel</span>
+      <input class="flt-input" id="flt-monitor-panel_type" placeholder="IPS, VA, OLED">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-monitor-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-monitor-max_price" placeholder="300">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('monitor','monitors')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('monitor','monitors')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-monitor"></div>
+  </div><div class="slot" id="slot-keyboard">
+    <div class="slot-top">
+      <span class="slot-name">⌨️ Teclado</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-keyboard" placeholder="Escribe para buscar Teclado…" autocomplete="off" oninput="onInput('keyboard','keyboards')" onfocus="onFocus('keyboard','keyboards')" onblur="setTimeout(()=>closeDrop('keyboard'),200)">
+      <div class="spin" id="spin-keyboard"></div>
+      <div class="results-drop" id="drop-keyboard"></div>
+    </div>
+    <div id="chip-keyboard"></div>
+    <div class="compat-warn" id="cwarn-keyboard"></div>
+    <button class="flt-toggle" id="ftbtn-keyboard" onclick="toggleFlt('keyboard')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-keyboard">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Conexión</span>
+      <input class="flt-input" id="flt-keyboard-wireless" placeholder="true=inalámbrico">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Tamaño</span>
+      <input class="flt-input" id="flt-keyboard-layout" placeholder="Full, TKL, 75%">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-keyboard-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-keyboard-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('keyboard','keyboards')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('keyboard','keyboards')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-keyboard"></div>
+  </div><div class="slot" id="slot-mouse">
+    <div class="slot-top">
+      <span class="slot-name">🖱️ Ratón</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-mouse" placeholder="Escribe para buscar Ratón…" autocomplete="off" oninput="onInput('mouse','mice')" onfocus="onFocus('mouse','mice')" onblur="setTimeout(()=>closeDrop('mouse'),200)">
+      <div class="spin" id="spin-mouse"></div>
+      <div class="results-drop" id="drop-mouse"></div>
+    </div>
+    <div id="chip-mouse"></div>
+    <div class="compat-warn" id="cwarn-mouse"></div>
+    <button class="flt-toggle" id="ftbtn-mouse" onclick="toggleFlt('mouse')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-mouse">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Conexión</span>
+      <input class="flt-input" id="flt-mouse-wireless" placeholder="true=inalámbrico">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">DPI mínimos</span>
+      <input class="flt-input" id="flt-mouse-min_dpi" placeholder="20000">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-mouse-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-mouse-max_price" placeholder="100">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('mouse','mice')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('mouse','mice')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-mouse"></div>
+  </div></div>
 </div>
 
-<div id="sum-bar">
-  <div class="sum-parts" id="sum-parts"></div>
+<div id="sum-bar" class="on">
+  <div class="sum-parts" id="sum-parts"><div class="sum-tag">⚙️ Ryzen 3 2200G <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span> <span>69.99 €</span></div><div class="sum-tag">🖨️ H610M-K <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span> <span>79.99 €</span></div></div>
   <div class="sum-right">
-    <div class="total" id="total">0,00 €</div>
+    <div class="total" id="total">149.98 €</div>
     <button class="btn-export" onclick="exportar()">Exportar</button>
   </div>
 </div>
@@ -507,6 +1093,7 @@ async function fetchAndShow(cid, ep, q){
     if(q) params.append('search', q);
 
     const mbId     = getMbId();
+    const cpuId    = selected['cpu']?.id    || null;
     const gpuId    = selected['gpu']?.id    || null;
     const cooler_id= selected['cooler']?.id || null;
     const caseId   = selected['case']?.id   || null;
@@ -525,6 +1112,11 @@ async function fetchAndShow(cid, ep, q){
         params.append('motherboard_id', mbId);
         isCompat = true;
       }
+    }
+    // Si hay CPU seleccionada y se busca placa base → filtrar por socket del CPU
+    if(cid === 'motherboard' && cpuId){
+      params.append('cpu_id', cpuId);
+      isCompat = true;
     }
     // Fuente filtra por GPU
     if(cid === 'psu' && gpuId){
@@ -704,6 +1296,14 @@ function selectComp(cid, item){
     activateCompatMode(item);
   }
 
+  // Si es CPU → filtrar placas base por socket compatible
+  if(cid === 'cpu'){
+    activateCpuCompatMode(item);
+  }
+
+  // Si se quita CPU → desactivar filtro de placa base por CPU (si no hay MB seleccionada)
+  
+
   updateSummary();
   loadSuggestions(cid, item);
 }
@@ -717,7 +1317,55 @@ function removeComp(cid){
   const w = document.getElementById(`cwarn-${cid}`);
   if(w){ w.textContent=''; w.classList.remove('show'); }
   if(cid === 'motherboard') deactivateCompatMode();
+  if(cid === 'cpu' && !getMbId()) deactivateCpuCompatMode();
   updateSummary();
+}
+
+// Activa filtro de placa base cuando se selecciona CPU primero
+async function activateCpuCompatMode(cpuItem){
+  // Solo actuar si no hay placa base ya seleccionada
+  if(getMbId()) return;
+
+  // Obtener info del socket del CPU desde la API
+  let socketTxt = '';
+  try{
+    const r    = await fetch(`${API}/compat-info/${cpuItem.id}?type=cpu`);
+    const info = await r.json();
+    if(info.socket) socketTxt = `Socket ${info.socket}`;
+  }catch{}
+
+  // Mostrar banner indicando que se filtra por CPU
+  const banner = document.getElementById('compat-banner');
+  document.getElementById('compat-banner-txt').textContent =
+    `CPU: ${cpuItem.name}${socketTxt ? ' — ' + socketTxt : ''} — mostrando placas base compatibles`;
+  banner.classList.add('show');
+
+  // Marcar slot de placa base como filtrado
+  const mbSlot = document.getElementById('slot-motherboard');
+  const mbCtag = document.getElementById('ctag-motherboard');
+  const mbAtag = document.getElementById('atag-motherboard');
+  if(mbSlot) mbSlot.classList.add('compat-filtered');
+  if(mbCtag) mbCtag.classList.add('show');
+  if(mbAtag) mbAtag.classList.add('hide');
+
+  // Refrescar lista de placas base con filtro de CPU
+  fetchAndShow('motherboard', 'motherboards', document.getElementById('inp-motherboard')?.value || '');
+}
+
+function deactivateCpuCompatMode(){
+  // Solo limpiar si tampoco hay placa base
+  if(getMbId()) return;
+  hideBanner();
+  const mbSlot = document.getElementById('slot-motherboard');
+  const mbCtag = document.getElementById('ctag-motherboard');
+  const mbAtag = document.getElementById('atag-motherboard');
+  const mbWarn = document.getElementById('cwarn-motherboard');
+  if(mbSlot) mbSlot.classList.remove('compat-filtered');
+  if(mbCtag) mbCtag.classList.remove('show');
+  if(mbAtag) mbAtag.classList.remove('hide');
+  if(mbWarn){ mbWarn.textContent=''; mbWarn.classList.remove('show'); }
+  // Refrescar placas base sin filtro
+  fetchAndShow('motherboard', 'motherboards', document.getElementById('inp-motherboard')?.value || '');
 }
 
 function clearMotherboard(){ removeComp('motherboard'); }
@@ -883,5 +1531,6 @@ function toast(msg){
   toastT = setTimeout(()=>el.classList.remove('on'), 2600);
 }
 </script>
-</body>
-</html>
+
+
+</body></html>

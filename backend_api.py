@@ -83,9 +83,16 @@ def get_motherboards(
     max_price:   Optional[float] = Query(None),
     form_factor: Optional[str]   = Query(None),
     gama:        Optional[str]   = Query(None),
+    cpu_id:      Optional[int]   = Query(None),
 ):
     sql    = "SELECT * FROM motherboards WHERE TRUE"
     params = []
+    # Si se pasa cpu_id, filtrar por socket compatible con ese CPU
+    if cpu_id:
+        cpu_rows = run_query("SELECT socket FROM cpus WHERE id = %s", (cpu_id,))
+        if cpu_rows:
+            sql += " AND socket = %s"
+            params.append(cpu_rows[0]["socket"])
     if search:
         sql += " AND (name ILIKE %s OR brand ILIKE %s)"
         params += [f"%{search}%", f"%{search}%"]

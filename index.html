@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PC Builder — Configura tu equipo</title>
+<link href="puta%20ia_files/css2.css" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c10;--s1:#0d1117;--s2:#111820;--s3:#162030;
+  --border:#1e2d3d;--border2:#2a3f55;
+  --accent:#00d4ff;--accent-dim:rgba(0,212,255,.12);
+  --accent2:#ff6b35;--success:#00e59b;--warn:#ffb830;--danger:#ff4757;
+  --text:#dce8f0;--muted:#5a7a90;--muted2:#3a5570;
+  --r:10px;--font:'Barlow',sans-serif;--head:'Barlow Condensed',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 50% at 0% 0%,rgba(0,212,255,.05) 0%,transparent 60%),
+             radial-gradient(ellipse 50% 40% at 100% 100%,rgba(255,107,53,.04) 0%,transparent 60%)}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2.5rem;background:rgba(8,12,16,.92);border-bottom:1px solid var(--border);backdrop-filter:blur(20px)}
+.logo{font-family:var(--head);font-size:1.6rem;font-weight:900;letter-spacing:1px;line-height:1}
+.logo .pc{color:var(--accent)}
+.logo .sub{font-size:.65rem;font-weight:400;color:var(--muted);letter-spacing:3px;display:block;margin-top:1px}
+.db-pill{display:flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border);
+  border-radius:20px;padding:4px 12px;font-size:.72rem;font-family:'Courier New',monospace;color:var(--muted)}
+.db-dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:background .3s,box-shadow .3s}
+.db-dot.ok{background:var(--success);box-shadow:0 0 6px var(--success)}
+.db-dot.err{background:var(--danger);box-shadow:0 0 6px var(--danger)}
+
+/* HERO */
+.hero{position:relative;z-index:1;padding:3.5rem 2.5rem 2rem}
+.hero h1{font-family:var(--head);font-size:clamp(2.8rem,6vw,5rem);font-weight:900;line-height:.95;
+  letter-spacing:-1px;text-transform:uppercase;margin-bottom:.6rem}
+.hero h1 .hl{color:var(--accent);text-shadow:0 0 40px rgba(0,212,255,.3)}
+.hero p{color:var(--muted);font-size:.9rem;letter-spacing:2px;text-transform:uppercase}
+
+/* MODE CARDS */
+.mode-wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:0 2.5rem 2.5rem}
+.mode-card{cursor:pointer;border:1px solid var(--border);border-radius:var(--r);padding:1.75rem 2rem;
+  background:var(--s1);transition:border-color .2s,transform .2s,background .2s;position:relative;overflow:hidden}
+.mode-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;
+  background:linear-gradient(135deg,rgba(0,212,255,.06) 0%,transparent 60%)}
+.mode-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.mode-card:hover::before{opacity:1}
+.mode-card.active{border-color:var(--accent);background:rgba(0,212,255,.04)}
+.mode-card.active.upgrade{border-color:var(--accent2);background:rgba(255,107,53,.04)}
+.mc-icon{font-size:2rem;margin-bottom:.75rem;display:block}
+.mode-card h2{font-family:var(--head);font-size:1.4rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem}
+.mode-card p{color:var(--muted);font-size:.82rem;line-height:1.6}
+
+/* BUILDER */
+#builder{display:none;position:relative;z-index:1;padding:0 2.5rem 8rem}
+#builder.on{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.sec-label{font-family:var(--head);font-size:.75rem;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--accent);padding:.4rem 0;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+
+/* COMPAT BANNER */
+#compat-banner{
+  display:none;margin-bottom:1.5rem;
+  background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);
+  border-radius:var(--r);padding:.75rem 1.2rem;
+  font-size:.83rem;color:var(--accent);
+  display:none;align-items:center;gap:.75rem
+}
+#compat-banner.show{display:flex}
+#compat-banner .cb-icon{font-size:1.1rem;flex-shrink:0}
+#compat-banner .cb-clear{
+  margin-left:auto;background:none;border:1px solid rgba(0,212,255,.3);
+  color:var(--accent);border-radius:5px;padding:3px 10px;cursor:pointer;
+  font-size:.72rem;font-family:var(--font);transition:background .15s
+}
+#compat-banner .cb-clear:hover{background:rgba(0,212,255,.1)}
+
+/* SLOTS GRID */
+.slots-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:1.25rem;margin-bottom:2rem}
+.slot{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:1.1rem;transition:border-color .2s}
+.slot.filled{border-color:rgba(0,212,255,.35)}
+.slot.compat-filtered{border-color:rgba(0,212,255,.2);background:rgba(0,212,255,.02)}
+
+.slot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;gap:.5rem}
+.slot-name{font-family:var(--head);font-size:.95rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.slot-badges{display:flex;gap:.4rem;align-items:center;flex-shrink:0}
+.compat-tag{font-size:.6rem;font-family:'Courier New',monospace;padding:2px 7px;border-radius:4px;
+  background:rgba(0,212,255,.1);color:var(--accent);border:1px solid rgba(0,212,255,.2);display:none}
+.compat-tag.show{display:inline}
+.all-tag{font-size:.6rem;font-family:'Courier New',monospace;padding:2px 7px;border-radius:4px;
+  background:rgba(90,122,144,.12);color:var(--muted);border:1px solid var(--border);display:inline}
+.all-tag.hide{display:none}
+
+/* search */
+.search-box{position:relative}
+.search-box input{width:100%;padding:.6rem .85rem .6rem 2.2rem;background:var(--s2);border:1px solid var(--border);
+  border-radius:7px;color:var(--text);font-family:var(--font);font-size:.88rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box input::placeholder{color:var(--muted2)}
+.search-icon{position:absolute;left:.7rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;pointer-events:none}
+
+/* dropdown */
+.results-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:300;
+  background:var(--s2);border:1px solid var(--border2);border-radius:8px;
+  max-height:300px;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.7);display:none}
+.results-drop.open{display:block}
+.rd-item{display:flex;align-items:center;justify-content:space-between;padding:.6rem .9rem;cursor:pointer;
+  border-bottom:1px solid rgba(255,255,255,.03);transition:background .12s;gap:.5rem}
+.rd-item:last-child{border-bottom:none}
+.rd-item:hover{background:rgba(0,212,255,.07)}
+.rd-name{font-size:.84rem;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd-brand{font-size:.7rem;color:var(--muted);flex-shrink:0}
+.rd-price{font-size:.78rem;color:var(--accent);font-family:'Courier New',monospace;flex-shrink:0}
+.rd-empty{padding:.8rem;text-align:center;color:var(--muted);font-size:.8rem}
+.rd-header{padding:.4rem .9rem;font-size:.65rem;color:var(--muted);text-transform:uppercase;
+  letter-spacing:2px;font-family:'Courier New',monospace;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border)}
+
+/* spin */
+.spin{display:none;position:absolute;right:.7rem;top:50%;transform:translateY(-50%);
+  width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent);
+  border-radius:50%;animation:spin .6s linear infinite}
+.spin.on{display:block}
+@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+
+/* chip */
+.sel-chip{display:flex;align-items:center;gap:.5rem;background:rgba(0,212,255,.07);
+  border:1px solid rgba(0,212,255,.2);border-radius:7px;padding:.45rem .75rem;margin-top:.5rem}
+.sel-chip .cn{font-size:.83rem;font-weight:600;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sel-chip .cp{font-size:.75rem;color:var(--accent);font-family:'Courier New',monospace;flex-shrink:0}
+.sel-chip .cr{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;line-height:1;padding:0;flex-shrink:0;transition:color .15s}
+.sel-chip .cr:hover{color:var(--danger)}
+
+/* filters */
+.flt-toggle{background:none;border:1px solid var(--border);border-radius:5px;color:var(--muted);
+  font-size:.7rem;font-family:var(--font);cursor:pointer;padding:3px 9px;margin-top:.5rem;
+  transition:border-color .15s,color .15s;display:inline-flex;align-items:center;gap:4px}
+.flt-toggle:hover,.flt-toggle.open{border-color:var(--accent2);color:var(--accent2)}
+.flt-panel{display:none;margin-top:.6rem;background:rgba(0,0,0,.25);border:1px solid var(--border);border-radius:8px;padding:.75rem}
+.flt-panel.open{display:block}
+.flt-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:flex-end}
+.flt-group{display:flex;flex-direction:column;gap:3px;flex:1;min-width:90px}
+.flt-label{font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:'Courier New',monospace}
+.flt-input{padding:.38rem .6rem;background:var(--s1);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-size:.78rem;font-family:var(--font);outline:none;width:100%}
+.flt-input:focus{border-color:var(--accent2)}
+.flt-btn{padding:.38rem .9rem;background:var(--accent2);color:#fff;border:none;border-radius:6px;cursor:pointer;
+  font-size:.75rem;font-family:var(--head);font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:opacity .15s;align-self:flex-end}
+.flt-btn:hover{opacity:.85}
+.flt-clear{padding:.38rem .7rem;background:none;border:1px solid var(--border);color:var(--muted);
+  border-radius:6px;cursor:pointer;font-size:.72rem;font-family:var(--font);transition:border-color .15s,color .15s;align-self:flex-end}
+.flt-clear:hover{border-color:var(--danger);color:var(--danger)}
+
+/* suggestions */
+.sug-box{margin-top:.6rem}
+.sug-title{font-size:.65rem;color:var(--warn);text-transform:uppercase;letter-spacing:2px;margin-bottom:.35rem;font-family:'Courier New',monospace}
+.sug-item{display:flex;align-items:center;gap:.5rem;padding:.38rem .6rem;border-radius:6px;
+  background:rgba(255,184,48,.05);border:1px solid rgba(255,184,48,.15);margin-bottom:.25rem;cursor:pointer;transition:background .12s}
+.sug-item:hover{background:rgba(255,184,48,.1)}
+.sug-item .si-name{font-size:.8rem;flex:1}
+.sug-item .si-price{font-size:.72rem;color:var(--warn);font-family:'Courier New',monospace}
+
+/* compat warning */
+.compat-warn{display:none;margin-top:.4rem;background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);
+  border-radius:6px;padding:.35rem .6rem;font-size:.74rem;color:var(--danger);font-family:'Courier New',monospace}
+.compat-warn.show{display:block}
+
+/* SUMMARY */
+#sum-bar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(8,12,16,.95);
+  border-top:1px solid var(--border);backdrop-filter:blur(20px);padding:.85rem 2.5rem;
+  display:none;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+#sum-bar.on{display:flex}
+.sum-parts{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;flex:1}
+.sum-tag{font-size:.72rem;background:var(--s2);border:1px solid var(--border);border-radius:5px;padding:3px 9px;white-space:nowrap}
+.sum-tag span{color:var(--accent)}
+.sum-right{display:flex;align-items:center;gap:1rem;flex-shrink:0}
+.total{font-family:var(--head);font-size:1.8rem;font-weight:800;color:var(--accent);letter-spacing:1px}
+.btn-export{padding:.55rem 1.4rem;background:var(--accent);color:#080c10;border:none;border-radius:7px;
+  font-family:var(--head);font-weight:800;font-size:.9rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:opacity .15s,transform .1s}
+.btn-export:hover{opacity:.9;transform:scale(1.02)}
+
+/* TOAST */
+#toast{position:fixed;bottom:5.5rem;right:1.5rem;z-index:999;background:var(--s2);border:1px solid var(--border2);
+  border-radius:8px;padding:.6rem 1.1rem;font-size:.82rem;opacity:0;pointer-events:none;transition:opacity .25s;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+#toast.on{opacity:1}
+
+.gama-btn{
+  padding:4px 14px;border-radius:20px;border:1px solid var(--border);
+  font-size:.72rem;font-family:var(--head);font-weight:700;letter-spacing:1px;
+  cursor:pointer;transition:opacity .15s,transform .1s;text-transform:uppercase
+}
+.gama-btn:hover{opacity:.8}
+.gama-btn.active-g{box-shadow:0 0 8px currentColor}
+
+@media(max-width:700px){
+  header{padding:.8rem 1rem}
+  .hero,.mode-wrap,#builder{padding-left:1rem;padding-right:1rem}
+  .mode-wrap{grid-template-columns:1fr}
+  .slots-grid{grid-template-columns:1fr}
+  #sum-bar{padding:.75rem 1rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span><span class="pc">PC</span>BUILDER</span>
+    <span class="sub">configurador de equipos</span>
+  </div>
+  <div class="db-pill">
+    <div class="db-dot ok" id="db-dot"></div>
+    <span id="db-lbl">DB conectada</span>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>MONTA TU<br><span class="hl">PC IDEAL</span></h1>
+  <p>// búsqueda en tiempo real · compatibilidad automática · sugerencias de mejora</p>
+</div>
+
+<div class="mode-wrap">
+  <div class="mode-card active" id="mc-build" onclick="setMode('build')">
+    <span class="mc-icon">🖥️</span>
+    <h2>Construir desde cero</h2>
+    <p>Elige cada pieza paso a paso. Al seleccionar la placa base, todos
+ los demás componentes se filtran automáticamente para garantizar 
+compatibilidad total.</p>
+  </div>
+</div>
+
+<div id="builder" class="on">
+  <p class="sec-label" id="sec-lbl">// selecciona componentes</p>
+
+  <div id="compat-banner" class="show">
+
+  <!-- Filtros rápidos de gama -->
+  <div id="gama-bar" style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center">
+    <span style="font-size:.7rem;color:var(--muted);font-family:'Courier New',monospace;text-transform:uppercase;letter-spacing:2px">Filtrar todo por gama:</span>
+    <button class="gama-btn active-g" id="gbtn-all" onclick="setGamaGlobal('')" style="background:rgba(255,255,255,.08);color:var(--text)">Todas</button>
+    <button class="gama-btn" id="gbtn-baja" onclick="setGamaGlobal('baja')" style="background:rgba(90,158,111,.15);color:#5a9e6f;border-color:#5a9e6f">Gama Baja</button>
+    <button class="gama-btn" id="gbtn-media" onclick="setGamaGlobal('media')" style="background:rgba(224,160,64,.15);color:#e0a040;border-color:#e0a040">Gama Media</button>
+    <button class="gama-btn" id="gbtn-alta" onclick="setGamaGlobal('alta')" style="background:rgba(224,85,85,.15);color:#e05555;border-color:#e05555">Gama Alta</button>
+  </div>
+    <span class="cb-icon">🔗</span>
+    <span id="compat-banner-txt">H610M-K — Socket LGA1700 · RAM DDR4 · PCIe 4.0 · Disco: NVMe M.2, 4 puertos SATA</span>
+    <button class="cb-clear" onclick="clearMotherboard()">✕ Quitar placa base</button>
+  </div>
+
+  <div class="slots-grid" id="slots-grid"><div class="slot filled" id="slot-motherboard">
+    <div class="slot-top">
+      <span class="slot-name">🖨️ Placa Base</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-motherboard" placeholder="Escribe para buscar Placa Base…" autocomplete="off" oninput="onInput('motherboard','motherboards')" onfocus="onFocus('motherboard','motherboards')" onblur="setTimeout(()=>closeDrop('motherboard'),200)" value="H610M-K">
+      <div class="spin" id="spin-motherboard"></div>
+      <div class="results-drop" id="drop-motherboard"><div class="rd-header">Todos los componentes disponibles (60)</div><div class="rd-item">
+      <span class="rd-name">A320M-HDV R4.0</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">49.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">54.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M Pro4-F</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A320M S2H</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M DS2 DDR4</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">74.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M-HDV</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">74.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M Pro4</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M S2H V2</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M DS3H V2</span>
+      <span class="rd-brand">Gigabyte</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">A520M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M Pro-A DDR4</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">H610M-K</span>
+      <span class="rd-brand">ASUS</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M Pro4 R2.0</span>
+      <span class="rd-brand">ASRock</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M-A Pro Max II</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">B450M Mortar</span>
+      <span class="rd-brand">MSI</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">99.99 €</span></div><div class="rd-empty">… y 45 más. Usa el buscador para filtrar.</div></div>
+    </div>
+    <div id="chip-motherboard">
+    <div class="sel-chip">
+      <span class="cn" title="H610M-K">H610M-K</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="cp">79.99 €</span>
+      <button class="cr" onclick="removeComp('motherboard')">✕</button>
+    </div></div>
+    <div class="compat-warn" id="cwarn-motherboard"></div>
+    <button class="flt-toggle" id="ftbtn-motherboard" onclick="toggleFlt('motherboard')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-motherboard">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Socket</span>
+      <input class="flt-input" id="flt-motherboard-socket" placeholder="AM5, LGA1700…">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-motherboard-brand" placeholder="ASUS, MSI…">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Factor de forma</span>
+      <input class="flt-input" id="flt-motherboard-form_factor" placeholder="ATX, mATX, ITX">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-motherboard-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-motherboard-max_price" placeholder="300">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('motherboard','motherboards')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('motherboard','motherboards')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-motherboard"><p class="sug-title">💡 mejoras disponibles</p><div class="sug-item">
+        <span class="si-name">B450M-A Pro Max II</span>
+        <span class="si-price">84.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">B450M Pro4 R2.0</span>
+        <span class="si-price">84.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">B450M Mortar</span>
+        <span class="si-price">99.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div></div>
+  </div><div class="slot filled compat-filtered" id="slot-cpu">
+    <div class="slot-top">
+      <span class="slot-name">⚙️ Procesador</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-cpu">todos</span><span class="compat-tag show" id="ctag-cpu">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-cpu" placeholder="Escribe para buscar Procesador…" autocomplete="off" oninput="onInput('cpu','cpus')" onfocus="onFocus('cpu','cpus')" onblur="setTimeout(()=>closeDrop('cpu'),200)" value="Ryzen 3 2200G">
+      <div class="spin" id="spin-cpu"></div>
+      <div class="results-drop" id="drop-cpu"><div class="rd-header">Todos los componentes disponibles (60)</div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 1200 AF</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">59.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">69.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 2200G</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">69.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 1600 AF</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10100</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 3200G</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">79.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-12100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-13100F</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">84.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 4500</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 3 3300X</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 2600</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 3500</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10300</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">89.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Core i3-10320</span>
+      <span class="rd-brand">Intel</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">94.99 €</span></div><div class="rd-item">
+      <span class="rd-name">Ryzen 5 3500X</span>
+      <span class="rd-brand">AMD</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="rd-price">94.99 €</span></div><div class="rd-empty">… y 45 más. Usa el buscador para filtrar.</div></div>
+    </div>
+    <div id="chip-cpu">
+    <div class="sel-chip">
+      <span class="cn" title="Ryzen 3 2200G">Ryzen 3 2200G</span>
+      <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span>
+      <span class="cp">69.99 €</span>
+      <button class="cr" onclick="removeComp('cpu')">✕</button>
+    </div></div>
+    <div class="compat-warn show" id="cwarn-cpu">⚠ "Ryzen 3 2200G" puede no ser compatible con la placa seleccionada</div>
+    <button class="flt-toggle" id="ftbtn-cpu" onclick="toggleFlt('cpu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-cpu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-cpu-brand" placeholder="AMD, Intel">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Núcleos mín.</span>
+      <input class="flt-input" id="flt-cpu-min_cores" placeholder="8">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-cpu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-cpu-max_price" placeholder="400">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('cpu','cpus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('cpu','cpus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-cpu"><p class="sug-title">💡 mejoras disponibles</p><div class="sug-item">
+        <span class="si-name">Ryzen 3 3200G</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">Ryzen 5 1600 AF</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div><div class="sug-item">
+        <span class="si-name">Core i3-10100</span>
+        <span class="si-price">79.99 €</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span></div></div>
+  </div><div class="slot compat-filtered" id="slot-ram">
+    <div class="slot-top">
+      <span class="slot-name">💾 Memoria RAM</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-ram">todos</span><span class="compat-tag show" id="ctag-ram">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-ram" placeholder="Escribe para buscar Memoria RAM…" autocomplete="off" oninput="onInput('ram','ram')" onfocus="onFocus('ram','ram')" onblur="setTimeout(()=>closeDrop('ram'),200)">
+      <div class="spin" id="spin-ram"></div>
+      <div class="results-drop" id="drop-ram"></div>
+    </div>
+    <div id="chip-ram"></div>
+    <div class="compat-warn" id="cwarn-ram"></div>
+    <button class="flt-toggle" id="ftbtn-ram" onclick="toggleFlt('ram')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-ram">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-ram-brand" placeholder="Corsair, G.Skill">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">GB mín.</span>
+      <input class="flt-input" id="flt-ram-min_gb" placeholder="16">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-ram-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-ram-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('ram','ram')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('ram','ram')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-ram"></div>
+  </div><div class="slot compat-filtered" id="slot-gpu">
+    <div class="slot-top">
+      <span class="slot-name">🎮 Tarjeta Gráfica</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-gpu" placeholder="Escribe para buscar Tarjeta Gráfica…" autocomplete="off" oninput="onInput('gpu','gpus')" onfocus="onFocus('gpu','gpus')" onblur="setTimeout(()=>closeDrop('gpu'),200)">
+      <div class="spin" id="spin-gpu"></div>
+      <div class="results-drop" id="drop-gpu"></div>
+    </div>
+    <div id="chip-gpu"></div>
+    <div class="compat-warn" id="cwarn-gpu"></div>
+    <button class="flt-toggle" id="ftbtn-gpu" onclick="toggleFlt('gpu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-gpu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-gpu-brand" placeholder="NVIDIA, AMD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">VRAM mín. (GB)</span>
+      <input class="flt-input" id="flt-gpu-min_vram" placeholder="8">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-gpu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-gpu-max_price" placeholder="600">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('gpu','gpus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('gpu','gpus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-gpu"></div>
+  </div><div class="slot compat-filtered" id="slot-storage">
+    <div class="slot-top">
+      <span class="slot-name">💿 Almacenamiento</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-storage" placeholder="Escribe para buscar Almacenamiento…" autocomplete="off" oninput="onInput('storage','storage')" onfocus="onFocus('storage','storage')" onblur="setTimeout(()=>closeDrop('storage'),200)">
+      <div class="spin" id="spin-storage"></div>
+      <div class="results-drop" id="drop-storage"></div>
+    </div>
+    <div id="chip-storage"></div>
+    <div class="compat-warn" id="cwarn-storage"></div>
+    <button class="flt-toggle" id="ftbtn-storage" onclick="toggleFlt('storage')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-storage">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Tipo</span>
+      <input class="flt-input" id="flt-storage-type" placeholder="NVMe, SSD, HDD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-storage-brand" placeholder="Samsung, WD">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">GB mín.</span>
+      <input class="flt-input" id="flt-storage-min_gb" placeholder="500">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-storage-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-storage-max_price" placeholder="120">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('storage','storage')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('storage','storage')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-storage"></div>
+  </div><div class="slot compat-filtered" id="slot-psu">
+    <div class="slot-top">
+      <span class="slot-name">🔌 Fuente Alimentación</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-psu" placeholder="Escribe para buscar Fuente Alimentación…" autocomplete="off" oninput="onInput('psu','psus')" onfocus="onFocus('psu','psus')" onblur="setTimeout(()=>closeDrop('psu'),200)">
+      <div class="spin" id="spin-psu"></div>
+      <div class="results-drop" id="drop-psu"></div>
+    </div>
+    <div id="chip-psu"></div>
+    <div class="compat-warn" id="cwarn-psu"></div>
+    <button class="flt-toggle" id="ftbtn-psu" onclick="toggleFlt('psu')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-psu">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-psu-brand" placeholder="Corsair, Seasonic">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Vatios mín.</span>
+      <input class="flt-input" id="flt-psu-min_watts" placeholder="750">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Certificación</span>
+      <input class="flt-input" id="flt-psu-certification" placeholder="Gold, Platinum">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-psu-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-psu-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('psu','psus')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('psu','psus')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-psu"></div>
+  </div><div class="slot compat-filtered" id="slot-case">
+    <div class="slot-top">
+      <span class="slot-name">🗃️ Caja</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-case" placeholder="Escribe para buscar Caja…" autocomplete="off" oninput="onInput('case','cases')" onfocus="onFocus('case','cases')" onblur="setTimeout(()=>closeDrop('case'),200)">
+      <div class="spin" id="spin-case"></div>
+      <div class="results-drop" id="drop-case"></div>
+    </div>
+    <div id="chip-case"></div>
+    <div class="compat-warn" id="cwarn-case"></div>
+    <button class="flt-toggle" id="ftbtn-case" onclick="toggleFlt('case')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-case">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-case-brand" placeholder="Corsair, NZXT">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Factor de forma</span>
+      <input class="flt-input" id="flt-case-form_factor" placeholder="ATX, mATX">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-case-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-case-max_price" placeholder="130">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('case','cases')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('case','cases')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-case"></div>
+  </div><div class="slot compat-filtered" id="slot-cooler">
+    <div class="slot-top">
+      <span class="slot-name">❄️ Refrigeración</span>
+      <div class="slot-badges"><span class="all-tag hide" id="atag-cooler">todos</span><span class="compat-tag show" id="ctag-cooler">compat ✓</span></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-cooler" placeholder="Escribe para buscar Refrigeración…" autocomplete="off" oninput="onInput('cooler','coolers')" onfocus="onFocus('cooler','coolers')" onblur="setTimeout(()=>closeDrop('cooler'),200)">
+      <div class="spin" id="spin-cooler"></div>
+      <div class="results-drop" id="drop-cooler"></div>
+    </div>
+    <div id="chip-cooler"></div>
+    <div class="compat-warn" id="cwarn-cooler"></div>
+    <button class="flt-toggle" id="ftbtn-cooler" onclick="toggleFlt('cooler')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-cooler">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Tipo</span>
+      <input class="flt-input" id="flt-cooler-type" placeholder="Air, AIO 360">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Marca</span>
+      <input class="flt-input" id="flt-cooler-brand" placeholder="Noctua, NZXT">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-cooler-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-cooler-max_price" placeholder="160">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('cooler','coolers')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('cooler','coolers')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-cooler"></div>
+  </div><div class="slot" id="slot-monitor">
+    <div class="slot-top">
+      <span class="slot-name">🖥️ Pantalla</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-monitor" placeholder="Escribe para buscar Pantalla…" autocomplete="off" oninput="onInput('monitor','monitors')" onfocus="onFocus('monitor','monitors')" onblur="setTimeout(()=>closeDrop('monitor'),200)">
+      <div class="spin" id="spin-monitor"></div>
+      <div class="results-drop" id="drop-monitor"></div>
+    </div>
+    <div id="chip-monitor"></div>
+    <div class="compat-warn" id="cwarn-monitor"></div>
+    <button class="flt-toggle" id="ftbtn-monitor" onclick="toggleFlt('monitor')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-monitor">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Resolución</span>
+      <input class="flt-input" id="flt-monitor-resolution" placeholder="1080p, 1440p, 4K">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Hz mínimos</span>
+      <input class="flt-input" id="flt-monitor-min_hz" placeholder="144">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Panel</span>
+      <input class="flt-input" id="flt-monitor-panel_type" placeholder="IPS, VA, OLED">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-monitor-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-monitor-max_price" placeholder="300">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('monitor','monitors')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('monitor','monitors')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-monitor"></div>
+  </div><div class="slot" id="slot-keyboard">
+    <div class="slot-top">
+      <span class="slot-name">⌨️ Teclado</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-keyboard" placeholder="Escribe para buscar Teclado…" autocomplete="off" oninput="onInput('keyboard','keyboards')" onfocus="onFocus('keyboard','keyboards')" onblur="setTimeout(()=>closeDrop('keyboard'),200)">
+      <div class="spin" id="spin-keyboard"></div>
+      <div class="results-drop" id="drop-keyboard"></div>
+    </div>
+    <div id="chip-keyboard"></div>
+    <div class="compat-warn" id="cwarn-keyboard"></div>
+    <button class="flt-toggle" id="ftbtn-keyboard" onclick="toggleFlt('keyboard')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-keyboard">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Conexión</span>
+      <input class="flt-input" id="flt-keyboard-wireless" placeholder="true=inalámbrico">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Tamaño</span>
+      <input class="flt-input" id="flt-keyboard-layout" placeholder="Full, TKL, 75%">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-keyboard-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-keyboard-max_price" placeholder="150">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('keyboard','keyboards')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('keyboard','keyboards')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-keyboard"></div>
+  </div><div class="slot" id="slot-mouse">
+    <div class="slot-top">
+      <span class="slot-name">🖱️ Ratón</span>
+      <div class="slot-badges"></div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-mouse" placeholder="Escribe para buscar Ratón…" autocomplete="off" oninput="onInput('mouse','mice')" onfocus="onFocus('mouse','mice')" onblur="setTimeout(()=>closeDrop('mouse'),200)">
+      <div class="spin" id="spin-mouse"></div>
+      <div class="results-drop" id="drop-mouse"></div>
+    </div>
+    <div id="chip-mouse"></div>
+    <div class="compat-warn" id="cwarn-mouse"></div>
+    <button class="flt-toggle" id="ftbtn-mouse" onclick="toggleFlt('mouse')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-mouse">
+      <div class="flt-row">
+        
+    <div class="flt-group">
+      <span class="flt-label">Conexión</span>
+      <input class="flt-input" id="flt-mouse-wireless" placeholder="true=inalámbrico">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">DPI mínimos</span>
+      <input class="flt-input" id="flt-mouse-min_dpi" placeholder="20000">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Gama</span>
+      <input class="flt-input" id="flt-mouse-gama" placeholder="baja, media, alta">
+    </div>
+    <div class="flt-group">
+      <span class="flt-label">Precio máx. €</span>
+      <input class="flt-input" id="flt-mouse-max_price" placeholder="100">
+    </div>
+        <button class="flt-btn" onclick="applyFlt('mouse','mice')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('mouse','mice')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-mouse"></div>
+  </div></div>
+</div>
+
+<div id="sum-bar" class="on">
+  <div class="sum-parts" id="sum-parts"><div class="sum-tag">⚙️ Ryzen 3 2200G <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span> <span>69.99 €</span></div><div class="sum-tag">🖨️ H610M-K <span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:rgba(90,158,111,.15);color:#5a9e6f;border:1px solid #5a9e6f;font-family:'Courier New',monospace;flex-shrink:0">GAMA BAJA</span> <span>79.99 €</span></div></div>
+  <div class="sum-right">
+    <div class="total" id="total">149.98 €</div>
+    <button class="btn-export" onclick="exportar()">Exportar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const API = 'https://mi-api-fx74.onrender.com/api';
+
+// ── COMPONENTES ─────────────────────────────────────────────────────────────
+const COMPS = [
+  {
+    id:'motherboard', label:'Placa Base', icon:'🖨️', ep:'motherboards',
+    filters:[
+      {key:'socket',      label:'Socket',         ph:'AM5, LGA1700…'},
+      {key:'brand',       label:'Marca',           ph:'ASUS, MSI…'},
+      {key:'form_factor', label:'Factor de forma', ph:'ATX, mATX, ITX'},
+      {key:'gama',        label:'Gama',            ph:'baja, media, alta'},
+      {key:'max_price',   label:'Precio máx. €',   ph:'300'},
+    ]
+  },
+  {
+    id:'cpu', label:'Procesador', icon:'⚙️', ep:'cpus', compatWith:'motherboard',
+    filters:[
+      {key:'brand',     label:'Marca',        ph:'AMD, Intel'},
+      {key:'min_cores', label:'Núcleos mín.', ph:'8'},
+      {key:'gama',      label:'Gama',         ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',ph:'400'},
+    ]
+  },
+  {
+    id:'ram', label:'Memoria RAM', icon:'💾', ep:'ram', compatWith:'motherboard',
+    filters:[
+      {key:'brand',     label:'Marca',        ph:'Corsair, G.Skill'},
+      {key:'min_gb',    label:'GB mín.',      ph:'16'},
+      {key:'gama',      label:'Gama',         ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',ph:'150'},
+    ]
+  },
+  {
+    id:'gpu', label:'Tarjeta Gráfica', icon:'🎮', ep:'gpus',
+    filters:[
+      {key:'brand',     label:'Marca',          ph:'NVIDIA, AMD'},
+      {key:'min_vram',  label:'VRAM mín. (GB)', ph:'8'},
+      {key:'gama',      label:'Gama',           ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',  ph:'600'},
+    ]
+  },
+  {
+    id:'storage', label:'Almacenamiento', icon:'💿', ep:'storage',
+    filters:[
+      {key:'type',      label:'Tipo',         ph:'NVMe, SSD, HDD'},
+      {key:'brand',     label:'Marca',        ph:'Samsung, WD'},
+      {key:'min_gb',    label:'GB mín.',      ph:'500'},
+      {key:'gama',      label:'Gama',         ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',ph:'120'},
+    ]
+  },
+  {
+    id:'psu', label:'Fuente Alimentación', icon:'🔌', ep:'psus',
+    filters:[
+      {key:'brand',         label:'Marca',         ph:'Corsair, Seasonic'},
+      {key:'min_watts',     label:'Vatios mín.',   ph:'750'},
+      {key:'certification', label:'Certificación', ph:'Gold, Platinum'},
+      {key:'gama',          label:'Gama',          ph:'baja, media, alta'},
+      {key:'max_price',     label:'Precio máx. €', ph:'150'},
+    ]
+  },
+  {
+    id:'case', label:'Caja', icon:'🗃️', ep:'cases',
+    filters:[
+      {key:'brand',       label:'Marca',           ph:'Corsair, NZXT'},
+      {key:'form_factor', label:'Factor de forma', ph:'ATX, mATX'},
+      {key:'gama',        label:'Gama',            ph:'baja, media, alta'},
+      {key:'max_price',   label:'Precio máx. €',   ph:'130'},
+    ]
+  },
+  {
+    id:'cooler', label:'Refrigeración', icon:'❄️', ep:'coolers', compatWith:'motherboard',
+    filters:[
+      {key:'type',      label:'Tipo',         ph:'Air, AIO 360'},
+      {key:'brand',     label:'Marca',        ph:'Noctua, NZXT'},
+      {key:'gama',      label:'Gama',         ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',ph:'160'},
+    ]
+  },
+  {
+    id:'monitor', label:'Pantalla', icon:'🖥️', ep:'monitors',
+    filters:[
+      {key:'resolution', label:'Resolución',   ph:'1080p, 1440p, 4K'},
+      {key:'min_hz',     label:'Hz mínimos',   ph:'144'},
+      {key:'panel_type', label:'Panel',         ph:'IPS, VA, OLED'},
+      {key:'gama',       label:'Gama',          ph:'baja, media, alta'},
+      {key:'max_price',  label:'Precio máx. €', ph:'300'},
+    ]
+  },
+  {
+    id:'keyboard', label:'Teclado', icon:'⌨️', ep:'keyboards',
+    filters:[
+      {key:'wireless',   label:'Conexión',      ph:'true=inalámbrico'},
+      {key:'layout',     label:'Tamaño',        ph:'Full, TKL, 75%'},
+      {key:'gama',       label:'Gama',          ph:'baja, media, alta'},
+      {key:'max_price',  label:'Precio máx. €', ph:'150'},
+    ]
+  },
+  {
+    id:'mouse', label:'Ratón', icon:'🖱️', ep:'mice',
+    filters:[
+      {key:'wireless',  label:'Conexión',       ph:'true=inalámbrico'},
+      {key:'min_dpi',   label:'DPI mínimos',    ph:'20000'},
+      {key:'gama',      label:'Gama',           ph:'baja, media, alta'},
+      {key:'max_price', label:'Precio máx. €',  ph:'100'},
+    ]
+  },
+];
+
+// ── ESTADO ───────────────────────────────────────────────────────────────────
+let mode       = null;
+let selected   = {};
+let debTmr     = {};
+let gamaGlobal = '';  // '' = todas, 'baja', 'media', 'alta'
+
+// ── GAMA GLOBAL ───────────────────────────────────────────────────────────────
+function setGamaGlobal(g){
+  gamaGlobal = g;
+  // Actualizar botones activos
+  ['all','baja','media','alta'].forEach(k=>{
+    const btn = document.getElementById(`gbtn-${k}`);
+    if(btn) btn.classList.toggle('active-g', (k==='all' ? g==='' : g===k));
+  });
+  // Actualizar el campo de gama en todos los paneles de filtro
+  COMPS.forEach(c=>{
+    const el = document.getElementById(`flt-${c.id}-gama`);
+    if(el) el.value = g;
+  });
+  toast(g ? `Mostrando solo gama ${g.toUpperCase()}` : 'Mostrando todas las gamas');
+}
+
+// ── HEALTH ───────────────────────────────────────────────────────────────────
+async function checkHealth(){
+  const dot = document.getElementById('db-dot');
+  const lbl = document.getElementById('db-lbl');
+  try{
+    const r = await fetch(`${API}/health`);
+    const d = await r.json();
+    if(d.status==='ok'){ dot.className='db-dot ok'; lbl.textContent='DB conectada'; }
+    else{ dot.className='db-dot err'; lbl.textContent='Error DB'; }
+  }catch{ dot.className='db-dot err'; lbl.textContent='Sin conexión'; }
+}
+checkHealth();
+
+// ── MODO ─────────────────────────────────────────────────────────────────────
+function setMode(m){
+  mode = m;
+  document.getElementById('mc-build').classList.add('active');
+  document.getElementById('sec-lbl').textContent = '// selecciona componentes';
+  selected = {};
+  buildSlots();
+  updateSummary();
+  const b = document.getElementById('builder');
+  b.classList.add('on');
+  setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'start'}), 50);
+}
+
+// Arrancar automáticamente
+window.addEventListener('DOMContentLoaded', ()=>{
+  setMode('build');
+  document.getElementById('gbtn-all')?.classList.add('active-g');
+});
+
+// ── SLOTS ────────────────────────────────────────────────────────────────────
+function buildSlots(){
+  const grid = document.getElementById('slots-grid');
+  grid.innerHTML = '';
+  COMPS.forEach(c => grid.appendChild(makeSlot(c)));
+  hideBanner();
+}
+
+function makeSlot(c){
+  const div = document.createElement('div');
+  div.className = 'slot';
+  div.id = `slot-${c.id}`;
+
+  const filtersHtml = c.filters.map(f=>`
+    <div class="flt-group">
+      <span class="flt-label">${f.label}</span>
+      <input class="flt-input" id="flt-${c.id}-${f.key}" placeholder="${f.ph}"/>
+    </div>`).join('');
+
+  const compatBadge = c.compatWith
+    ? `<span class="compat-tag" id="ctag-${c.id}">compat ✓</span>` : '';
+  const allBadge = c.compatWith
+    ? `<span class="all-tag" id="atag-${c.id}">todos</span>` : '';
+
+  div.innerHTML = `
+    <div class="slot-top">
+      <span class="slot-name">${c.icon} ${c.label}</span>
+      <div class="slot-badges">${allBadge}${compatBadge}</div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="inp-${c.id}"
+        placeholder="Escribe para buscar ${c.label}…"
+        autocomplete="off"
+        oninput="onInput('${c.id}','${c.ep}')"
+        onfocus="onFocus('${c.id}','${c.ep}')"
+        onblur="setTimeout(()=>closeDrop('${c.id}'),200)"
+      />
+      <div class="spin" id="spin-${c.id}"></div>
+      <div class="results-drop" id="drop-${c.id}"></div>
+    </div>
+    <div id="chip-${c.id}"></div>
+    <div class="compat-warn" id="cwarn-${c.id}"></div>
+    <button class="flt-toggle" id="ftbtn-${c.id}" onclick="toggleFlt('${c.id}')">⚙ filtros</button>
+    <div class="flt-panel" id="fltpanel-${c.id}">
+      <div class="flt-row">
+        ${filtersHtml}
+        <button class="flt-btn" onclick="applyFlt('${c.id}','${c.ep}')">Filtrar</button>
+        <button class="flt-clear" onclick="clearFlt('${c.id}','${c.ep}')">✕ limpiar</button>
+      </div>
+    </div>
+    <div class="sug-box" id="sug-${c.id}"></div>
+  `;
+  return div;
+}
+
+// ── BÚSQUEDA ─────────────────────────────────────────────────────────────────
+function onInput(cid, ep){
+  clearTimeout(debTmr[cid]);
+  debTmr[cid] = setTimeout(()=>{
+    const q = document.getElementById(`inp-${cid}`).value.trim();
+    fetchAndShow(cid, ep, q);
+  }, 220);
+}
+
+// Al hacer foco: si no hay texto carga TODO (o compatibles si hay placa base)
+function onFocus(cid, ep){
+  const q = document.getElementById(`inp-${cid}`).value.trim();
+  fetchAndShow(cid, ep, q);
+}
+
+async function fetchAndShow(cid, ep, q){
+  const drop = document.getElementById(`drop-${cid}`);
+  const spin = document.getElementById(`spin-${cid}`);
+  spin.classList.add('on');
+
+  try{
+    const params = new URLSearchParams();
+    if(q) params.append('search', q);
+
+    const mbId     = getMbId();
+    const cpuId    = selected['cpu']?.id    || null;
+    const gpuId    = selected['gpu']?.id    || null;
+    const cooler_id= selected['cooler']?.id || null;
+    const caseId   = selected['case']?.id   || null;
+
+    let isCompat = false;
+
+    // Pasar IDs relevantes según el componente
+    if(mbId){
+      // Estos se filtran por placa base
+      if(['cpu','ram','gpu','storage','cooler'].includes(cid)){
+        params.append('motherboard_id', mbId);
+        isCompat = true;
+      }
+      // La caja también filtra por factor de forma de la placa
+      if(cid === 'case'){
+        params.append('motherboard_id', mbId);
+        isCompat = true;
+      }
+    }
+    // Si hay CPU seleccionada y se busca placa base → filtrar por socket del CPU
+    if(cid === 'motherboard' && cpuId){
+      params.append('cpu_id', cpuId);
+      isCompat = true;
+    }
+    // Fuente filtra por GPU
+    if(cid === 'psu' && gpuId){
+      params.append('gpu_id', gpuId);
+      isCompat = true;
+    }
+    // Caja filtra también por cooler y gpu
+    if(cid === 'case'){
+      if(gpuId)     { params.append('gpu_id', gpuId);       isCompat = true; }
+      if(cooler_id) { params.append('cooler_id', cooler_id); isCompat = true; }
+    }
+    // Cooler filtra también por caja
+    if(cid === 'cooler' && caseId){
+      params.append('case_id', caseId);
+      isCompat = true;
+    }
+
+    // Filtros del panel
+    const comp = COMPS.find(c=>c.id===cid);
+    comp.filters.forEach(f=>{
+      const el = document.getElementById(`flt-${cid}-${f.key}`);
+      if(el && el.value.trim()) params.append(f.key, el.value.trim());
+    });
+
+    // Gama global (si no está ya puesta en el panel de filtros)
+    if(gamaGlobal && !params.has('gama')) params.append('gama', gamaGlobal);
+
+    const r    = await fetch(`${API}/${ep}?${params}`);
+    const data = await r.json();
+    renderDrop(drop, data, cid, isCompat, q);
+  }catch(e){
+    drop.innerHTML = `<div class="rd-empty">Error de conexión</div>`;
+    drop.classList.add('open');
+  }
+  finally{ spin.classList.remove('on'); }
+}
+
+// ── BADGE DE GAMA ──────────────────────────────────────────────────────────
+function gamaBadge(gama){
+  if(!gama) return '';
+  const map = {
+    baja:  { label:'GAMA BAJA',  color:'#5a9e6f', bg:'rgba(90,158,111,.15)'  },
+    media: { label:'GAMA MEDIA', color:'#e0a040', bg:'rgba(224,160,64,.15)'  },
+    alta:  { label:'GAMA ALTA',  color:'#e05555', bg:'rgba(224,85,85,.15)'   },
+  };
+  const g = map[gama.toLowerCase()];
+  if(!g) return '';
+  return `<span style="font-size:.6rem;padding:2px 6px;border-radius:4px;background:${g.bg};color:${g.color};border:1px solid ${g.color};font-family:'Courier New',monospace;flex-shrink:0">${g.label}</span>`;
+}
+
+function itemDetail(item, cid){
+  if(cid === 'monitor'){
+    const parts = [];
+    if(item.size_inch)   parts.push(`${item.size_inch}"`);
+    if(item.resolution)  parts.push(item.resolution);
+    if(item.refresh_hz)  parts.push(`${item.refresh_hz}Hz`);
+    if(item.panel_type)  parts.push(item.panel_type);
+    if(item.hdr)         parts.push('HDR');
+    return parts.join(' · ');
+  }
+  if(cid === 'keyboard'){
+    const parts = [];
+    parts.push(item.wireless ? '📶 Inalámbrico' : '🔌 Cable');
+    if(item.layout)      parts.push(item.layout);
+    if(item.switch_type) parts.push(item.switch_type);
+    return parts.join(' · ');
+  }
+  if(cid === 'mouse'){
+    const parts = [];
+    parts.push(item.wireless ? '📶 Inalámbrico' : '🔌 Cable');
+    if(item.dpi_max)  parts.push(`${item.dpi_max.toLocaleString()} DPI`);
+    if(item.weight_g) parts.push(`${item.weight_g}g`);
+    return parts.join(' · ');
+  }
+  return item.brand || '';
+}
+
+function renderDrop(drop, items, cid, isCompat, q){
+  drop.innerHTML = '';
+
+  // Cabecera indicando si son todos o compatibles
+  const header = document.createElement('div');
+  header.className = 'rd-header';
+  if(isCompat){
+    header.textContent = `✓ Mostrando solo compatibles con tu placa base (${items.length})`;
+    header.style.color = 'var(--accent)';
+  } else {
+    header.textContent = q
+      ? `Resultados para "${q}" (${items.length})`
+      : `Todos los componentes disponibles (${items.length})`;
+  }
+  drop.appendChild(header);
+
+  if(!items.length){
+    const empty = document.createElement('div');
+    empty.className = 'rd-empty';
+    empty.textContent = isCompat
+      ? 'No hay componentes compatibles con la placa seleccionada'
+      : 'Sin resultados';
+    drop.appendChild(empty);
+    drop.classList.add('open');
+    return;
+  }
+
+  items.slice(0, 15).forEach(item=>{
+    const d = document.createElement('div');
+    d.className = 'rd-item';
+    d.innerHTML = `
+      <span class="rd-name">${item.name}</span>
+      <span class="rd-brand">${itemDetail(item, cid)}</span>
+      ${gamaBadge(item.gama)}
+      <span class="rd-price">${item.price!=null ? item.price.toFixed(2)+' €' : ''}</span>`;
+    d.onmousedown = ()=> selectComp(cid, item);
+    drop.appendChild(d);
+  });
+
+  if(items.length > 15){
+    const more = document.createElement('div');
+    more.className = 'rd-empty';
+    more.textContent = `… y ${items.length - 15} más. Usa el buscador para filtrar.`;
+    drop.appendChild(more);
+  }
+
+  drop.classList.add('open');
+}
+
+function closeDrop(cid){
+  const d = document.getElementById(`drop-${cid}`);
+  if(d) d.classList.remove('open');
+}
+
+// ── FILTROS ──────────────────────────────────────────────────────────────────
+function toggleFlt(cid){
+  const p = document.getElementById(`fltpanel-${cid}`);
+  const b = document.getElementById(`ftbtn-${cid}`);
+  const on = p.classList.toggle('open');
+  b.classList.toggle('open', on);
+}
+
+async function applyFlt(cid, ep){
+  const q = document.getElementById(`inp-${cid}`).value.trim();
+  await fetchAndShow(cid, ep, q);
+  document.getElementById(`drop-${cid}`).classList.add('open');
+}
+
+function clearFlt(cid, ep){
+  const comp = COMPS.find(c=>c.id===cid);
+  comp.filters.forEach(f=>{
+    const el = document.getElementById(`flt-${cid}-${f.key}`);
+    if(el) el.value = '';
+  });
+  const q = document.getElementById(`inp-${cid}`).value.trim();
+  fetchAndShow(cid, ep, q);
+}
+
+// ── SELECCIONAR ───────────────────────────────────────────────────────────────
+function selectComp(cid, item){
+  selected[cid] = item;
+  const inp = document.getElementById(`inp-${cid}`);
+  if(inp) inp.value = item.name;
+  closeDrop(cid);
+
+  // chip
+  const chip = document.getElementById(`chip-${cid}`);
+  chip.innerHTML = `
+    <div class="sel-chip">
+      <span class="cn" title="${item.name}">${item.name}</span>
+      ${gamaBadge(item.gama)}
+      <span class="cp">${item.price!=null ? item.price.toFixed(2)+' €' : ''}</span>
+      <button class="cr" onclick="removeComp('${cid}')">✕</button>
+    </div>`;
+
+  document.getElementById(`slot-${cid}`).classList.add('filled');
+
+  // Si es placa base → activar modo compatibilidad en todos los slots dependientes
+  if(cid === 'motherboard'){
+    activateCompatMode(item);
+  }
+
+  // Si es CPU → filtrar placas base por socket compatible
+  if(cid === 'cpu'){
+    activateCpuCompatMode(item);
+  }
+
+  // Si se quita CPU → desactivar filtro de placa base por CPU (si no hay MB seleccionada)
+  
+
+  updateSummary();
+  loadSuggestions(cid, item);
+}
+
+function removeComp(cid){
+  delete selected[cid];
+  document.getElementById(`inp-${cid}`).value = '';
+  document.getElementById(`chip-${cid}`).innerHTML = '';
+  document.getElementById(`sug-${cid}`).innerHTML = '';
+  document.getElementById(`slot-${cid}`).classList.remove('filled');
+  const w = document.getElementById(`cwarn-${cid}`);
+  if(w){ w.textContent=''; w.classList.remove('show'); }
+  if(cid === 'motherboard') deactivateCompatMode();
+  if(cid === 'cpu' && !getMbId()) deactivateCpuCompatMode();
+  updateSummary();
+}
+
+// Activa filtro de placa base cuando se selecciona CPU primero
+async function activateCpuCompatMode(cpuItem){
+  // Solo actuar si no hay placa base ya seleccionada
+  if(getMbId()) return;
+
+  // Obtener info del socket del CPU desde la API
+  let socketTxt = '';
+  try{
+    const r    = await fetch(`${API}/compat-info/${cpuItem.id}?type=cpu`);
+    const info = await r.json();
+    if(info.socket) socketTxt = `Socket ${info.socket}`;
+  }catch{}
+
+  // Mostrar banner indicando que se filtra por CPU
+  const banner = document.getElementById('compat-banner');
+  document.getElementById('compat-banner-txt').textContent =
+    `CPU: ${cpuItem.name}${socketTxt ? ' — ' + socketTxt : ''} — mostrando placas base compatibles`;
+  banner.classList.add('show');
+
+  // Marcar slot de placa base como filtrado
+  const mbSlot = document.getElementById('slot-motherboard');
+  const mbCtag = document.getElementById('ctag-motherboard');
+  const mbAtag = document.getElementById('atag-motherboard');
+  if(mbSlot) mbSlot.classList.add('compat-filtered');
+  if(mbCtag) mbCtag.classList.add('show');
+  if(mbAtag) mbAtag.classList.add('hide');
+
+  // Refrescar lista de placas base con filtro de CPU
+  fetchAndShow('motherboard', 'motherboards', document.getElementById('inp-motherboard')?.value || '');
+}
+
+function deactivateCpuCompatMode(){
+  // Solo limpiar si tampoco hay placa base
+  if(getMbId()) return;
+  hideBanner();
+  const mbSlot = document.getElementById('slot-motherboard');
+  const mbCtag = document.getElementById('ctag-motherboard');
+  const mbAtag = document.getElementById('atag-motherboard');
+  const mbWarn = document.getElementById('cwarn-motherboard');
+  if(mbSlot) mbSlot.classList.remove('compat-filtered');
+  if(mbCtag) mbCtag.classList.remove('show');
+  if(mbAtag) mbAtag.classList.remove('hide');
+  if(mbWarn){ mbWarn.textContent=''; mbWarn.classList.remove('show'); }
+  // Refrescar placas base sin filtro
+  fetchAndShow('motherboard', 'motherboards', document.getElementById('inp-motherboard')?.value || '');
+}
+
+function clearMotherboard(){ removeComp('motherboard'); }
+
+// ── COMPATIBILIDAD ────────────────────────────────────────────────────────────
+function getMbId(){ return selected['motherboard']?.id || null; }
+
+async function activateCompatMode(mbItem){
+  // Info detallada de compatibilidad desde la API
+  let compatTxt = `Placa: ${mbItem.name}`;
+  try{
+    const r    = await fetch(`${API}/compat-info/${mbItem.id}`);
+    const info = await r.json();
+    const parts = [];
+    if(info.socket)       parts.push(`Socket ${info.socket}`);
+    if(info.memory_type)  parts.push(`RAM ${info.memory_type}`);
+    if(info.pcie_version) parts.push(info.pcie_version);
+    if(info.storage_accepts?.length) parts.push(`Disco: ${info.storage_accepts.join(', ')}`);
+    compatTxt = parts.join(' · ');
+  }catch{}
+
+  const banner = document.getElementById('compat-banner');
+  document.getElementById('compat-banner-txt').textContent = `${mbItem.name} — ${compatTxt}`;
+  banner.classList.add('show');
+
+  // Todos los slots se filtran por compatibilidad
+  const allCompatIds = ['cpu','ram','gpu','storage','psu','case','cooler'];
+  allCompatIds.forEach(cid=>{
+    const ctag = document.getElementById(`ctag-${cid}`);
+    const atag = document.getElementById(`atag-${cid}`);
+    const slot = document.getElementById(`slot-${cid}`);
+    if(ctag) ctag.classList.add('show');
+    if(atag) atag.classList.add('hide');
+    if(slot) slot.classList.add('compat-filtered');
+    // Validar los ya seleccionados
+    const comp = COMPS.find(c=>c.id===cid);
+    if(selected[cid] && comp) validateOne(cid, comp.ep, selected[cid]);
+  });
+}
+
+function deactivateCompatMode(){
+  hideBanner();
+  const allCompatIds = ['cpu','ram','gpu','storage','psu','case','cooler'];
+  allCompatIds.forEach(cid=>{
+    const ctag = document.getElementById(`ctag-${cid}`);
+    const atag = document.getElementById(`atag-${cid}`);
+    const slot = document.getElementById(`slot-${cid}`);
+    const warn = document.getElementById(`cwarn-${cid}`);
+    if(ctag) ctag.classList.remove('show');
+    if(atag) atag.classList.remove('hide');
+    if(slot) slot.classList.remove('compat-filtered');
+    if(warn){ warn.textContent=''; warn.classList.remove('show'); }
+  });
+}
+
+function hideBanner(){
+  document.getElementById('compat-banner').classList.remove('show');
+}
+
+async function validateOne(cid, ep, item){
+  const mbId = getMbId();
+  if(!mbId) return;
+  try{
+    const r    = await fetch(`${API}/${ep}?motherboard_id=${mbId}&search=${encodeURIComponent(item.name)}`);
+    const data = await r.json();
+    const w    = document.getElementById(`cwarn-${cid}`);
+    if(!data.length){
+      w.textContent = `⚠ "${item.name}" puede no ser compatible con la placa seleccionada`;
+      w.classList.add('show');
+    } else {
+      w.textContent=''; w.classList.remove('show');
+    }
+  }catch{}
+}
+
+// ── SUGERENCIAS ───────────────────────────────────────────────────────────────
+const TYPE_MAP = {
+  motherboard:'motherboard',cpu:'cpu',ram:'ram',gpu:'gpu',
+  storage:'storage',psu:'psu',case:'case',cooler:'cooler',
+  monitor:'monitor',keyboard:'keyboard',mouse:'mouse'
+};
+
+async function loadSuggestions(cid, item){
+  const box = document.getElementById(`sug-${cid}`);
+  box.innerHTML = '';
+  try{
+    const params = new URLSearchParams();
+    const mbId     = getMbId();
+    const gpuId    = selected['gpu']?.id    || null;
+    const coolerId = selected['cooler']?.id || null;
+    const caseId   = selected['case']?.id   || null;
+
+    if(mbId)     params.append('motherboard_id', mbId);
+    if(gpuId)    params.append('gpu_id',         gpuId);
+    if(coolerId) params.append('cooler_id',      coolerId);
+    if(caseId)   params.append('case_id',        caseId);
+
+    const r    = await fetch(`${API}/suggest/${TYPE_MAP[cid]}/${item.id}?${params}`);
+    const data = await r.json();
+    if(!data.suggestions?.length) return;
+    box.innerHTML = `<p class="sug-title">💡 mejoras disponibles</p>`;
+    data.suggestions.forEach(s=>{
+      const d = document.createElement('div');
+      d.className = 'sug-item';
+      d.innerHTML = `
+        <span class="si-name">${s.name}</span>
+        <span class="si-price">${s.price!=null ? s.price.toFixed(2)+' €' : ''}</span>
+        <span style="font-size:.7rem;color:var(--muted)">→ elegir</span>`;
+      d.onclick = ()=> selectComp(cid, s);
+      box.appendChild(d);
+    });
+  }catch{}
+}
+
+// ── SUMMARY ───────────────────────────────────────────────────────────────────
+function updateSummary(){
+  const bar     = document.getElementById('sum-bar');
+  const parts   = document.getElementById('sum-parts');
+  const tot     = document.getElementById('total');
+  const entries = Object.entries(selected);
+  if(!entries.length){ bar.classList.remove('on'); return; }
+  bar.classList.add('on');
+  let total = 0;
+  parts.innerHTML = '';
+  entries.forEach(([cid, item])=>{
+    const comp = COMPS.find(c=>c.id===cid);
+    total += item.price||0;
+    const t = document.createElement('div');
+    t.className = 'sum-tag';
+    t.innerHTML = `${comp.icon} ${item.name.split(' ').slice(0,3).join(' ')} ${gamaBadge(item.gama)} <span>${item.price!=null ? item.price.toFixed(2)+' €' : ''}</span>`;
+    parts.appendChild(t);
+  });
+  tot.textContent = total.toFixed(2)+' €';
+}
+
+// ── EXPORTAR ──────────────────────────────────────────────────────────────────
+function exportar(){
+  let txt = '╔══════════════════════════════════════════════════╗\n';
+  txt    += '║          MI CONFIGURACIÓN PC — PC BUILDER        ║\n';
+  txt    += '╚══════════════════════════════════════════════════╝\n\n';
+  let total = 0;
+  Object.entries(selected).forEach(([cid,item])=>{
+    const c = COMPS.find(x=>x.id===cid);
+    const p = item.price!=null ? item.price.toFixed(2)+' €' : 'N/D';
+    txt += `${c.icon}  ${c.label.padEnd(22)} ${item.name.padEnd(38)} ${p}\n`;
+    total += item.price||0;
+  });
+  txt += `\n${'─'.repeat(70)}\nTOTAL ESTIMADO:${' '.repeat(45)}${total.toFixed(2)} €\n`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt],{type:'text/plain'}));
+  a.download = 'mi-pc.txt';
+  a.click();
+  toast('✓ Lista exportada');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastT;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>el.classList.remove('on'), 2600);
+}
+</script>
+
+
+</body></html>
